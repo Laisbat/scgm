@@ -1,0 +1,144 @@
+{% extends "administrativo/layout.phtml" %}
+
+{% block title %}Malote{% endblock %}
+
+{% block content %}
+
+<h2>Cadastro Malote</h2>
+  <script>
+      $(function(){
+          $('.btn-salvar').on('click', function(){
+            var status = $('#status').val();
+            var erro = false;
+            if (status == 'E') {
+                var dt_envio = $('#data_envio').val();
+                if (!dt_envio) {
+                    erro = true;
+                    alert('Favor, preencher o campo de data de envio.');
+                    $('#data_envio').focus();
+                }
+            } else if(status == 'P') {
+                var dt_recebimento = $('#data_recebimento').val();
+                if (!dt_recebimento) {
+                    erro = true;
+                    alert('Favor, preencher o campo de data de recebimento.');
+                    $('#data_recebimento').focus();
+                }
+            }
+            if (!erro) {
+                $('#formulario').submit();
+            }
+          });
+      });
+  </script>
+<div class="row">
+    <div class="well">
+        <form class="form-horizontal" action="/malote/salvar" method="post" id="formulario">
+            <input type="hidden" name="id_malote" value="{{ rMalote.id_malote }}">
+            <fieldset>
+                <legend>Dados do Malote - COD: {{ rMalote.id_malote ? rMalote.id_malote : 'Novo' }}</legend>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="data_envio" class="col-sm-3 control-label">Data de Envio</label>
+                        <div class="col-sm-6">
+                            <input type="date" id="data_envio" name="data_envio" value="{{ rMalote.dt_envio == 0 ? '' : rMalote.dt_envio|date('Y-m-d') }}" class="form-control datepicker" placeholder="Informe a data do envio.">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="operadora" class="col-sm-3 control-label">Operadora</label>
+                        <div class="col-sm-6">
+                            <select required name="operadora" id="operadora" class="form-control">
+                                <option value="">Selecione uma opção</option>
+                                {% for chave, rOperadora in rsOperadora %}
+                                    <option value="{{ rOperadora.id_operadora }}"  {{ rOperadora.id_operadora == rMalote.fk_operadora ? 'selected' : '' }}>
+                                        {{ rOperadora.operadora }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vl_receber" class="col-sm-3 control-label">Valor a Receber</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control"  name="vl_receber" id="vl_receber" value="{{ rMalote.valor_receber|number_format(2, ',', '.') }}" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="data_recebimento" class="col-sm-4 control-label">Data de Recebimento</label>
+                        <div class="col-sm-6">
+                            <input type="date" id="data_recebimento" name="data_recebimento" 
+                                   value="{{ rMalote.dt_recebimento == 0 ? '' : rMalote.dt_recebimento|date('Y-m-d') }}" 
+                                   class="form-control datepicker" 
+                                   placeholder="Informe a data do recebimento." S>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status" class="col-sm-4 control-label">Status</label>
+                        <div class="col-sm-6">
+                            <select name="status" id="status" class="form-control">
+                                <option value="">Selecione uma opção</option>
+                                <option value="A" {{ rMalote.status == 'A' ? 'selected' : '' }}>Aguardando Envio</option>
+                                <option value="E" {{ rMalote.status == 'E' ? 'selected' : '' }}>Enviado</option>
+                                <option value="P" {{ rMalote.status == 'P' ? 'selected' : '' }}>Pago</option>
+                                <option value="I" {{ rMalote.status == 'I' ? 'selected' : '' }}>Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vl_recebido" class="col-sm-4 control-label">Valor Recebido</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control"  name="vl_recebido" id="vl_recebido" value="{{ rMalote.valor_recebido|number_format(2, ',', '.') }}" readonly>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Guias</legend>
+                <div style="max-height:200px; overflow-y: auto;">
+                    <table class="table table-striped table-bordered table-condensed table-responsive">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>N° Guia</th>
+                                <th>Valor (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for chave, rGuia in rsGuia %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="guia[]" value="{{ rGuia.id_guia }}" {{ (rMalote and rGuia.fk_malote == rMalote.id_malote) ? 'checked="checked"' : '' }}>
+                                    </td>
+                                    <td>{{ rGuia.id_guia }}</td>
+                                    <td>{{ rGuia.vl_total|number_format(2, ',', '.') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>                    
+                    </table>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Observações</legend>
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <textarea class="form-control"  name="observacao" id="observacao" rows="3">{{ rMalote.observacao }}</textarea>
+                    </div>
+                </div>                
+            </fieldset>
+            
+            <div class="row">
+                <div class="col-md-2 pull-right">
+                    <button type="button" class="btn btn-primary btn-salvar">Salvar</button>
+                    <a href="/malote" class="btn btn-warning">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

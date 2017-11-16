@@ -1,0 +1,78 @@
+{% extends "administrativo/layout.phtml" %}
+
+{% block title %}Estatistica{% endblock %}
+
+{% block content %}
+
+<script src="/resources/chartjs/chart.min.js"></script>
+<h2>Estatistica</h2>
+<div class="row">
+    <div class="well">
+        <form class="form-horizontal" action="/estatistica" method="get">
+            <div class="row">
+                <div class="form-group">
+                    <label for="malote" class="col-sm-4 control-label">Malote</label>
+                    <div class="col-sm-4">
+                        <select required name="malote" id="malote" class="form-control">
+                            <option value="">Selecione um malote</option>
+                            {% for chave, rMalote in comboMalote %}
+                            <option value="{{ rMalote.id_malote }}">
+                                {{ rMalote.id_malote }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2 pull-right">
+                    <button type="submit" class="btn btn-primary">Gerar</button>
+                    <a href="/malote" class="btn btn-warning">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="valor" width="100%" height="50"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="quantidade" width="100%" height="50"></canvas>
+    </div>
+</div>
+<script>
+    var dataValor = {{ estatistica|json_encode(constant('JSON_PRETTY_PRINT'))|raw }};
+    var dataQuantidade = {{ quantidade|json_encode(constant('JSON_PRETTY_PRINT'))|raw }};
+    
+    var ctx = document.getElementById("valor").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: dataValor,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+    
+    var ctx = document.getElementById("quantidade").getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: dataQuantidade,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+</script>
+{% endblock %}

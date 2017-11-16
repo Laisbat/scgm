@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{% endblock %} - SGM</title>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="/resources/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/resources/font-awesome-4.7.0/css/font-awesome.min.css">
+        
+        <script src="/resources/jquery/jquery-1.12.4.js"></script>
+        <script src="/resources/jquery/jquery-ui.js"></script>
+        <script src="/resources/bootstrap/js/bootstrap.min.js"></script>
+    {% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">SGM</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/administrativo" >Home </a></li>
+                    <li class=""><a href="/malote">Malotes</a></li>
+                    <li class=""><a href="/guia">Guias</a></li>
+                    <li class=""><a href="/">Pacientes</a></li>
+                    <li class=""><a href="/">Dentistas</a></li>
+                    <li class=""><a href="/">Operadoras</a></li>
+                    <li class=""><a href="/estatistica">Estatística</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logout">Desconectar</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->            
+        </div>
+    </nav>
+
+    <div class="container" id="content" style="margin-top: 60px;">
+        {% include 'flash-message.phtml' %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <div id="footer">
+        
+    </div>
+    {% block script %}{% endblock %}
+</body>
+</html>

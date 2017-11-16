@@ -1,0 +1,91 @@
+{% extends "administrativo/layout.phtml" %}
+
+{% block title %}Malote{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="/resources/bootgrid/jquery.bootgrid.min.css">
+    <h3>Malotes</h3>
+    <a href="/malote/cadastro" class="btn btn-primary">Cadastrar Novo</a>
+    <table class="table table-hover" id="tabela" >
+	<thead>
+            <tr>
+                <th data-column-id="id" data-identifier="true">Cód. Malote</th>
+                <th data-column-id="operadora">Operadora</th>
+                <th data-column-id="envio">Data de Envio</th>
+                <th data-column-id="recebimento">Data de Recebimento</th>
+                <th data-column-id="receber">Valor a Receber</th>
+                <th data-column-id="recebido">Valor Recebido</th>
+                <th data-column-id="status" data-formatter="status">Status</th>
+                <th data-column-id="botao" data-formatter="botao" data-sortable="false"></th>
+            </tr>
+	</thead>
+	<tbody>
+            {% for chave,valor in lista %}
+                <tr>
+                    <td>{{ valor.id_malote }}</td>
+                    <td>{{ valor.operadora }}</td>
+                    <td>{{ valor.dt_envio ? valor.dt_envio|date("d/m/Y") : ''}}</td>
+                    <td>{{ valor.dt_recebimento ? valor.dt_recebimento|date("d/m/Y") : ''}}</td>
+                    <td>{{ valor.valor_receber|number_format(2, ',', '.') }}</td>
+                    <td>{{ valor.valor_recebido|number_format(2, ',', '.') }}</td>
+                    <td>{{ valor.status }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+	</tbody>
+    </table>
+
+    <script src="/resources/bootgrid/jquery.bootgrid.js"></script>
+    <script type="text/javascript">
+        function confirmDelete(id){
+            if(confirm('Você realmente deseja excluir este item?')) {
+                window.location.href = '/malote/excluir/' + id;
+            }
+            return false;
+        }
+        $(function(){
+            $("#tabela").bootgrid({
+                formatters: {
+                    "botao": function(column, row){
+                        var retorno = "<a href=\"malote/cadastro/"+ row.id + "\" title=\"Alterar\" class=\"btn btn-sm btn-default command-edit\"><span class=\"fa fa-pencil\"></span></a> ";
+                        if (row.status == 'P') {
+                            retorno += "<a href=\"malote/pagamento/"+ row.id + "\" class=\"btn btn-sm btn-default command-edit\" title=\"Confirmar Pagamento\"><span class=\"fa fa-check\"></span></a>";
+                        }
+                        if (row.status != 'I') {
+                            retorno += "<button type=\"button\" onclick=\"confirmDelete("+row.id+")\" class=\"btn btn-sm btn-danger command-edit\" title=\"Excluir\"><span class=\"fa fa-trash\"></span></button>";
+                        }
+                        
+                        return retorno;
+                    },
+                    "status": function(column, row){
+                        var saida;
+                        var label;
+                        switch(row.status) {
+                            case 'E':
+                                saida = "Enviado";
+                                label = "warning";
+                                break;
+                            case 'A':
+                                saida = "Aguardando envio";
+                                label = "info";
+                                break;
+                            case 'I':
+                                saida = "Inativo";
+                                label = "danger";
+                                break;
+                            case 'P':
+                                saida = "Pago";
+                                label = "success";
+                                break;
+                            case 'C':
+                                saida = "Confirmado";
+                                label = "success";
+                                break;
+                        }
+                        return "<span class=\"label label-"+label+"\">"+ saida +"</span>";
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

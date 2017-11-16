@@ -1,0 +1,108 @@
+{% extends "administrativo/layout.phtml" %}
+
+{% block title %}Guia{% endblock %}
+
+{% block content %}
+
+<h2>Cadastrar Guia</h2>
+<script>
+    $(function () {
+        $("#datepicker").datepicker({dateFormat: "dd/mm/yy"});
+    });
+</script>
+<div class="row">
+    <div class="well">
+        <form class="form-horizontal" action="/guia/salvar" method="post">
+            <input type="hidden" name="id_guia" value="{{ rGuia.id_guia }}">
+
+            <div class="form-group">
+                <label for="id_paciente" class="col-sm-2 control-label">Paciente</label>
+                <div class="col-sm-5">
+                    <select required name="paciente" id="paciente" class="form-control">
+                        <option value="">Selecione um paciente</option>
+                        {% for chave, rPaciente in rsPaciente %}
+                        <option value="{{ rPaciente.id_paciente }}"  {{ rPaciente.id_paciente == rGuia.fk_paciente ? 'selected' : '' }}>
+                                {{ rPaciente.paciente }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="procedimento" class="col-sm-2 control-label">Procedimento</label>
+                <div class="col-sm-10">
+                    <select required name="procedimento" id="procedimento" class="form-control">
+                        <option value="">Selecione um procedimento</option>
+                        {% for chave, rProcedimento in rsProcedimento %}
+                            <option value="{{ rProcedimento.id_procedimento }}">
+                                {{ rProcedimento.procedimento }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="dentista" class="col-sm-2 control-label">Dentista</label>
+                <div class="col-sm-10">
+                    <select required name="dentista" id="dentista" class="form-control">
+                        <option value="">Selecione um dentista</option>
+                        {% for chave, rDentista in rsDentista %}
+                            <option value="{{ rDentista.id_dentista }}"  {{ rDentista.id_dentista == rGuia.fk_dentista ? 'selected' : '' }}>
+                                {{ rDentista.dentista }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+        <div class="form-group">
+            <label for="data" class="col-sm-2 control-label">Data de Vencimento</label>
+            <div class="col-sm-3">
+                <input type="text"  id="data datepicker" name="data_vencimento" value="{{ rGuia.dt_vencimento == 0 ? '' : rGuia.dt_vencimento|date('d/m/Y') }}" class="form-control" placeholder="Informe a data de vencimento." required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="operadora" class="col-sm-2 control-label">Operadora</label>
+            <div class="col-sm-10">
+                <select required name="operadora" id="operadora" class="form-control">
+                    <option value="">Selecione uma opção</option>
+                    {% for chave, rOperadora in rsOperadora %}
+                    <option value="{{ rOperadora.id_operadora }}"  {{ rOperadora.id_operadora == rGuia.fk_operadora ? 'selected' : '' }}>
+                            {{ rOperadora.operadora }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="vl_receber" class="col-sm-2 control-label">Valor a Receber</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control"  name="vl_receber" id="vl_receber" value="{{ rMalote.valor_receber }}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="vl_recebido" class="col-sm-2 control-label">Valor Recebido</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control"  name="vl_recebido" id="vl_recebido" value="{{ rMalote.valor_recebido }}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="observacao" class="col-sm-2 control-label">Observação</label>
+        <div class="col-sm-10">
+            <textarea class="form-control"  name="observacao" id="observacao" rows="3">{{ rMalote.observacao }}</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="/malote" class="btn btn-warning">Cancelar</a>
+        </div>
+    </div>
+</form>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "administrativo/layout.phtml" %}
+
+{% block title %}Guia{% endblock %}
+
+{% block content %}
+    <h3>Guias</h3>
+    <a href="/guia/cadastro" class="btn btn-primary">Cadastrar Novo</a>
+    <table class="table table-hover">
+	<thead>
+            <tr>
+                <th>Guia</th>
+                <th>Operadora</th>
+                <th>Data de Envio</th>
+                <th>Valor a Receber</th>
+                <th>Valor Recebido</th>
+                <th>Status</th>
+            </tr>
+	</thead>
+	<tbody>
+            {% for chave,valor in lista %}
+                <tr>
+                    <td>
+                        <span class="box_propriedades">
+                            #{{ valor.id_guia }}
+                            <span>
+                                <a href="guia/cadastro/{{ valor.id_guia }}">Alterar |</a>
+                                <a href="" onclick="return confirmDelete({{ valor.id_guia }});">Inativar</a>
+                            </span>
+                        </span>
+                    </td>
+                    <td>{{ valor.operadora }}</td>
+                    <td>{{ valor.dt_envio|date("d/m/Y") }}</td>
+                    <td>{{ valor.valor_receber }}</td>
+                    <td>{{ valor.valor_recebido }}</td>
+                    <td>{{ valor.status == 'A' ? '<span class="label label-success">Ativo</span>' : '<span class="label label-danger">Inativo</span>' }}</td>
+                </tr>
+            {% endfor %}
+	</tbody>
+    </table>
+
+    <script type="text/javascript">
+        function confirmDelete(id){
+            if(confirm('Você realmente deseja excluir este item?')) {
+                window.location.href = '/malote/excluir/' + id;
+            }
+            return false;
+        }
+    </script>
+{% endblock %}
